@@ -11,6 +11,7 @@ import { generateUID } from 'src/common/utils/uuid.helper';
 export class JudicialService {
   private expedientes: Expediente[] = [];
   private nextExpedienteId = generateUID();
+  private nextCuadernoId = 1;
 
   createExpediente(
     departamento: string,
@@ -63,10 +64,12 @@ export class JudicialService {
   }
   addCuadernoToExpediente(
     expedienteId: string,
-    cuaderno: Cuaderno,
+    numero: number,
+    descripcion: string,
   ): Expediente | undefined {
-    const expediente = this.getExpedienteById(expedienteId);
+    const expediente = this.expedientes.find((exp) => exp.id === expedienteId);
     if (expediente) {
+      const cuaderno = new Cuaderno(this.nextCuadernoId, numero, descripcion);
       expediente.cuadernos.push(cuaderno);
     }
     return expediente;

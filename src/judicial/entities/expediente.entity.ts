@@ -14,6 +14,8 @@ export class Expediente {
   partesProcesales: ParteProcesal[];
   cuadernos: Cuaderno[];
   documentos: Documento[];
+  expedienteFisico: boolean;
+  documentosEnSoporteFisico: boolean;
 
   constructor(
     id: string,

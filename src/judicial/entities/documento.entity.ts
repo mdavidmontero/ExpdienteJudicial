@@ -1,3 +1,5 @@
+import { Cuaderno } from './cuaderno.entity';
+
 export class Documento {
   id: number;
   nombre: string;
@@ -5,9 +7,12 @@ export class Documento {
   fechaIncorporacion: string;
   orden: number;
   numeroPaginas: number;
+  paginaInicio: number;
+  paginaFin: number;
   formato: string;
   tamanio: number;
   origen: string;
+  cuaderno: Cuaderno; // Asociación al cuaderno
   observaciones: string;
 
   constructor(
@@ -20,7 +25,9 @@ export class Documento {
     formato: string,
     tamanio: number,
     origen: string,
+    cuaderno: Cuaderno, // Cuaderno al que pertenece el documento
     observaciones: string,
+    paginaInicio: number,
   ) {
     this.id = id;
     this.nombre = nombre;
@@ -28,9 +35,12 @@ export class Documento {
     this.fechaIncorporacion = fechaIncorporacion;
     this.orden = orden;
     this.numeroPaginas = numeroPaginas;
+    this.paginaInicio = paginaInicio;
+    this.paginaFin = paginaInicio + numeroPaginas - 1;
     this.formato = formato;
     this.tamanio = tamanio;
     this.origen = origen;
+    this.cuaderno = cuaderno;
     this.observaciones = observaciones;
   }
 }
