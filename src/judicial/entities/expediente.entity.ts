@@ -13,9 +13,8 @@ export class Expediente {
   numeroRadicacion: string;
   partesProcesales: ParteProcesal[];
   cuadernos: Cuaderno[];
-  documentos: Documento[];
-  expedienteFisico: boolean;
-  documentosEnSoporteFisico: boolean;
+  expedienteFisico: boolean; // Nuevo campo
+  documentosEnSoporteFisico: boolean; // Nuevo campo
 
   constructor(
     id: string,
@@ -24,6 +23,8 @@ export class Expediente {
     despacho: DespachoJudicial,
     serie: SerieDocumental,
     numeroRadicacion: string,
+    expedienteFisico: boolean,
+    documentosEnSoporteFisico: boolean,
   ) {
     this.id = id;
     this.departamento = departamento;
@@ -31,8 +32,9 @@ export class Expediente {
     this.despacho = despacho;
     this.serie = serie;
     this.numeroRadicacion = numeroRadicacion;
+    this.expedienteFisico = expedienteFisico;
+    this.documentosEnSoporteFisico = documentosEnSoporteFisico;
     this.partesProcesales = [];
     this.cuadernos = [];
-    this.documentos = [];
   }
 }

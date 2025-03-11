@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Expediente } from './entities/expediente.entity';
 import { DespachoJudicial } from './entities/despachoJudicial.entity';
 import { SerieDocumental } from './entities/serie-documental.entity';
@@ -6,6 +6,7 @@ import { Documento } from './entities/documento.entity';
 import { ParteProcesal } from './entities/parte-procesal.entity';
 import { Cuaderno } from './entities/cuaderno.entity';
 import { generateUID } from 'src/common/utils/uuid.helper';
+import { CreateJudicialDto } from './dto/create-judicial.dto';
 
 @Injectable()
 export class JudicialService {
@@ -13,14 +14,20 @@ export class JudicialService {
   private nextExpedienteId = generateUID();
   private nextCuadernoId = 1;
 
-  createExpediente(
-    departamento: string,
-    ciudad: string,
-    despacho: DespachoJudicial,
-    serie: SerieDocumental,
-    numeroRadicacion: string,
-  ): Expediente {
-    const expedienteId = generateUID();
+  createExpediente(createJudicialDto: CreateJudicialDto): Expediente {
+    const expedienteId = generateUID(); // Generar un ID único para el expediente
+
+    // Extraer propiedades del DTO
+    const {
+      departamento,
+      ciudad,
+      despacho,
+      serie,
+      numeroRadicacion,
+      expedienteFisico,
+      documentosEnSoporteFisico,
+    } = createJudicialDto;
+
     const expediente = new Expediente(
       expedienteId,
       departamento,
@@ -28,7 +35,10 @@ export class JudicialService {
       despacho,
       serie,
       numeroRadicacion,
+      expedienteFisico,
+      documentosEnSoporteFisico,
     );
+
     this.expedientes.push(expediente);
     return expediente;
   }
@@ -41,16 +51,46 @@ export class JudicialService {
     return this.expedientes.find((exp) => exp.id === id);
   }
 
-  addDocumentoToExpediente(
+  addDocumentoToCuaderno(
     expedienteId: string,
+    cuadernoId: number,
     documento: Documento,
-  ): Expediente | undefined {
+  ): Cuaderno | undefined {
     const expediente = this.getExpedienteById(expedienteId);
+
     if (expediente) {
-      expediente.documentos.push(documento);
+      let cuaderno = expediente.cuadernos.find((c) => c.id === cuadernoId);
+
+      if (!cuaderno) {
+        cuaderno = new Cuaderno(
+          cuadernoId,
+          cuadernoId,
+          `Cuaderno ${cuadernoId}`,
+        );
+        expediente.cuadernos.push(cuaderno);
+      }
+
+      const documentoExiste = cuaderno.documento.some(
+        (d) => d.id === documento.id,
+      );
+
+      if (!documentoExiste) {
+        cuaderno.documento.push(documento);
+        return cuaderno;
+      }
     }
-    return expediente;
   }
+
+  // addDocumentoToExpediente(
+  //   expedienteId: string,
+  //   documento: Documento,
+  // ): Expediente | undefined {
+  //   const expediente = this.getExpedienteById(expedienteId);
+  //   if (expediente) {
+  //     expediente.documentos.push(documento);
+  //   }
+  //   return expediente;
+  // }
 
   addParteProcesalToExpediente(
     expedienteId: string,
@@ -67,11 +107,14 @@ export class JudicialService {
     numero: number,
     descripcion: string,
   ): Expediente | undefined {
-    const expediente = this.expedientes.find((exp) => exp.id === expedienteId);
-    if (expediente) {
-      const cuaderno = new Cuaderno(this.nextCuadernoId, numero, descripcion);
-      expediente.cuadernos.push(cuaderno);
+    const expediente = this.getExpedienteById(expedienteId);
+    if (!expediente) {
+      throw new NotFoundException('Expediente not exists');
     }
-    return expediente;
+    if (expediente) {
+      const cuaderno = new Cuaderno(this.nextCuadernoId++, numero, descripcion);
+      expediente.cuadernos.push(cuaderno);
+      return expediente;
+    }
   }
 }
