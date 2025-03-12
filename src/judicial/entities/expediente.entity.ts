@@ -13,8 +13,8 @@ export class Expediente {
   numeroRadicacion: string;
   partesProcesales: ParteProcesal[];
   cuadernos: Cuaderno[];
-  expedienteFisico: boolean; // Nuevo campo
-  documentosEnSoporteFisico: boolean; // Nuevo campo
+  expedienteFisico: boolean;
+  documentosEnSoporteFisico: boolean;
 
   constructor(
     id: string,

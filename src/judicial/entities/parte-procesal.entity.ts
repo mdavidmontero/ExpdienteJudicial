@@ -1,11 +1,11 @@
 export class ParteProcesal {
-  id: number;
+  id: string;
   tipoDocumento: string;
   numeroDocumento: string;
   nombre: string;
 
   constructor(
-    id: number,
+    id: string,
     tipoDocumento: string,
     numeroDocumento: string,
     nombre: string,

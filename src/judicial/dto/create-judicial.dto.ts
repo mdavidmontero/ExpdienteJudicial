@@ -2,13 +2,11 @@ import {
   IsString,
   IsBoolean,
   ValidateNested,
-  MinLength,
-  Min,
   IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { DespachoJudicial } from '../entities/despachoJudicial.entity';
-import { SerieDocumental } from '../entities/serie-documental.entity';
+import { DespachoJudicial } from './despacho.dto';
+import { SerieDocumental } from './serie-documental.dto';
 
 export class CreateJudicialDto {
   @IsNotEmpty({ message: 'Departamento no puede estar vacío' })
@@ -19,12 +17,15 @@ export class CreateJudicialDto {
   @IsString({ message: 'Ciudad no valido' })
   ciudad: string;
 
+  @IsNotEmpty({ message: 'Despacho no puede estar vacío' })
   @ValidateNested()
   @Type(() => DespachoJudicial)
-  despacho: DespachoJudicial = new DespachoJudicial('', '', '');
+  despacho: DespachoJudicial;
 
+  @IsNotEmpty({ message: 'Serie documental no puede estar vacía' })
   @ValidateNested()
-  serie: SerieDocumental = new SerieDocumental(0, '', '');
+  @Type(() => SerieDocumental)
+  serie: SerieDocumental;
 
   @IsNotEmpty({ message: 'Numero Radicacion no puede estar vacío' })
   @IsString()
